@@ -9,7 +9,11 @@ password="alywest_gisdevl" #Replace with your password
 
 
 
-table_names = ["ssManhole", "ssInlet",""]
+table_names = ["ssManhole", "swManhole", "ssInlet", "swInlet", "ssIntakeOutfall", "swIntakeOutfall", "ssCleanout", "swCleanout", "ssNetworkJunction",
+               "swNetworkJunction","ssNetworkStructure", "swNetworkStructure", "ssValve", "swValve",
+               "SSP", "ssPump", "swPump", "ssPumpStation", "swPumpStation", "ssGhostPipe", "swGhostPipe",
+               "ssGravityMain", "swGravityMain", "ssPressurizedMain", "swPressurizedMain", "ssCasing", "swCasing",
+               "swManagementPoint", "swManagementLine"]
 
 def fetch_status_counts(table_name):
     query = f"""
