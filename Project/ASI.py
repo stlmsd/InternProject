@@ -4,18 +4,18 @@ import oracledb
 app = Flask(__name__)
 
 dsn = oracledb.makedsn("RJMSDDBT02","1521",service_name="gisdevl")
-username="alywest" #Replace with your username
-password="alywest_gisdevl" #Replace with your password
+username=" " #Fill with your username
+password=" " #Fill with your password
 
+ss_table_names = ["ssManhole", "ssInlet", "ssIntakeOutfall", "ssCleanout", "ssNetworkJunction",
+                  "ssNetworkStructure","ssValve", "SSP", "ssPump", "ssPumpStation","ssGhostPipe", 
+                  "ssGravityMain", "ssPressurizedMain", "ssCasing"]
 
+sw_table_names = ["swManhole", "swInlet", "swIntakeOutfall", "swCleanout", "swNetworkJunction", 
+                  "swNetworkStructure", "swValve", "swPump", "swPumpStation", "swGhostPipe",
+                  "swGravityMain", "swPressurizedMain", "swCasing", "swManagementPoint", "swManagementLine"]
 
-table_names = ["ssManhole", "swManhole", "ssInlet", "swInlet", "ssIntakeOutfall", "swIntakeOutfall", "ssCleanout", "swCleanout", "ssNetworkJunction",
-               "swNetworkJunction","ssNetworkStructure", "swNetworkStructure", "ssValve", "swValve",
-               "SSP", "ssPump", "swPump", "ssPumpStation", "swPumpStation", "ssGhostPipe", "swGhostPipe",
-               "ssGravityMain", "swGravityMain", "ssPressurizedMain", "swPressurizedMain", "ssCasing", "swCasing",
-               "swManagementPoint", "swManagementLine"]
-
-def fetch_status_counts(table_name):
+def fetch_status_counts(table_name, feature_type):
     query = f"""
         SELECT 
             COUNT(CASE WHEN STATUS = 1 THEN 1 END) AS Active,
@@ -37,7 +37,10 @@ def fetch_status_counts(table_name):
 
         columns = ["Active", "Abandoned", "Removed", "Consolidated", "Design", "Operating", "To_Be_Removed", "Inactive"]
 
-        data = {"Feature_Name": table_name, **dict(zip(columns, result))}
+        data = {
+            "Feature_Name": table_name,
+            "Feature_Type": feature_type,
+            **dict(zip(columns, result))}
     return data
 
 # Routes
@@ -45,8 +48,16 @@ def fetch_status_counts(table_name):
 def index():
     
     table_data = []
-    for index, table_name in enumerate(table_names, start = 1):
-        status_counts = fetch_status_counts(table_name)
+
+    # SS Tables
+    for index, table_name in enumerate(ss_table_names, start = 1):
+        status_counts = fetch_status_counts(table_name, "SS")
+        status_counts["S_No"] = index
+        table_data.append(status_counts)
+
+    # sw Tables
+    for index, table_name in enumerate(sw_table_names, start = 1):
+        status_counts = fetch_status_counts(table_name, "SW")
         status_counts["S_No"] = index
         table_data.append(status_counts)
 
